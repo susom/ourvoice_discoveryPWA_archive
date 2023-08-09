@@ -1,9 +1,6 @@
-language: node_js
-node_js:
-  - 16
+language: minimal
 env:
   global:
-    - CLOUD_RUN_REGION=us-west1
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1   # prevent gcloud from prompting
 cache:
   directories:
