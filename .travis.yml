@@ -2,10 +2,10 @@ language: node_js
 node_js:
   - 20
 dist: jammy
-addons:
-  apt:
-    sources:
-      - sourceline: 'deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'
+#addons:
+#  apt:
+#    sources:
+#      - sourceline: 'deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'
 env:
   global:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1   # prevent gcloud from prompting
