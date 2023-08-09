@@ -2,3 +2,4 @@ som-rit-ourvoice-travis.json
 node_modules
 .idea/
 travis-deploy-gcp-key.json
+build
