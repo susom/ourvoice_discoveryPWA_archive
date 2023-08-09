@@ -1,4 +1,8 @@
-runtime: nodejs16
+runtime: nodejs20
+
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: 20
 
 instance_class: F2
 
