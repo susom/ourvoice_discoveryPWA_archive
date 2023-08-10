@@ -56,6 +56,7 @@ export const SessionContextProvider = ({children}) => {
     }, []);
 
     const handleLanguageChange = (language) => {
+        console.log("handleLanguageChange setting language from drop down", language);
         setSelectedLanguage(language);
     };
 
@@ -77,6 +78,7 @@ export const SessionContextProvider = ({children}) => {
 
     const getTranslation = (key) => {
         if (!translations[key]) return '';
+        console.log("getTranslation should see about 40 of these and also when i select dropdown", key);
         return translations[key][selectedLanguage] || translations[key]['en'] || '';
     };
 

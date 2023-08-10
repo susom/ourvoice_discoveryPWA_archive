@@ -3,3 +3,4 @@ node_modules
 .idea/
 travis-deploy-gcp-key.json
 build
+.env
