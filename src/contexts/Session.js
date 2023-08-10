@@ -3,6 +3,7 @@ import { cloneDeep } from "../components/util";
 import { firestore } from "../database/Firebase";
 import { collection, getDocs, getDoc,  collectionGroup, doc,  where, query } from "firebase/firestore";
 import defaultTranslations from './defaultTranslations.json';
+import useAnonymousSignIn from "../components/useAnonymousSignIn";
 
 const context_init = {
     project_id : "",
@@ -33,6 +34,8 @@ export const SessionContextProvider = ({children}) => {
     const [translations, setTranslations]               = useState(defaultTranslations);
     const [version, setVersion]                         = useState("v 4.0.0");
 
+    const isAuthenticated = useAnonymousSignIn();
+
     useEffect(() => {
         const fetchTranslations = async () => {
             const ovMetaRef     = collection(firestore, "ov_meta");
@@ -45,6 +48,10 @@ export const SessionContextProvider = ({children}) => {
                     setTranslations({ ...defaultTranslations, ...appTextData });
 
                     const version       = appDataSnapshot.get('version');
+                    setVersion(version);
+
+                    console.log("useEffect translations SHOULD ONLY SHOW ONCE", appTextData);
+                    console.log("useEffect version", version);
 
                 }
             } catch (error) {
@@ -52,12 +59,28 @@ export const SessionContextProvider = ({children}) => {
             }
         };
 
-        fetchTranslations();
-    }, []);
+        if (isAuthenticated) {
+            fetchTranslations();
+        }
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        console.log("Translations have been updated SHOULD ONLY SHOW AFTER THE ABOVE USE EFFECT RIGHT?:", translations);
+    }, [translations]);
+
+
+    useEffect(() => {
+        console.log("Selected language: ", selectedLanguage);
+        console.log("Current translations: ", translations);
+    }, [selectedLanguage]);
 
     const handleLanguageChange = (language) => {
-        console.log("handleLanguageChange setting language from drop down", language);
         setSelectedLanguage(language);
+    }
+
+    const getTranslation = (key) => {
+        if (!translations[key]) return '';
+        return translations[key][selectedLanguage] || translations[key]['en'] || '';
     };
 
     // This function can be called to update lastUpdated
@@ -76,11 +99,7 @@ export const SessionContextProvider = ({children}) => {
         setPreviewWalkID(null);
     }
 
-    const getTranslation = (key) => {
-        if (!translations[key]) return '';
-        console.log("getTranslation should see about 40 of these and also when i select dropdown", key);
-        return translations[key][selectedLanguage] || translations[key]['en'] || '';
-    };
+
 
     return (
         <SessionContext.Provider value={{data, setData,selectedLanguage,handleLanguageChange, translations, getTranslation, resetData, slideOpen, setSlideOpen, previewPhoto, setPreviewPhoto, previewWalk, setPreviewWalk, previewWalkID, setPreviewWalkID, previewProjID, setPreviewProjID, lastUploadsUpdated, updateLastUploadsUpdated, version}}>

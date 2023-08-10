@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import {db_walks, db_project, db_files, db_logs} from "../../database/db";
 import { collection, getDocs, collectionGroup, doc,  where, query } from "firebase/firestore";
 import {firestore, auth} from "../../database/Firebase";
-import useAnonymousSignIn from "../../components/useAnonymousSignIn";
+
 
 import {WalkmapContext} from "../../contexts/Walkmap";
 import {SessionContext} from "../../contexts/Session";
@@ -336,9 +336,6 @@ export function Home(){
     const walkmap_context           = useContext(WalkmapContext); //THE API NEEDS TO "warm up" SO KICK IT OFF HERE BUT DONT STORE DATA UNTIL 'in_walk'
     const session_context           = useContext(SessionContext);
 
-    useAnonymousSignIn();
-    console.log("need to 'warm up' GPS?",walkmap_context.data.length);
-
     const [pcode, setPcode]         = useState("");
     const [pword, setPword]         = useState("");
     const [signedIn, setSignedIn]   = useState(null);
@@ -383,30 +380,7 @@ export function Home(){
             console.error('Error counting records:', error);
         });
 
-        // const get_ov_meta = async () => {
-        //     try {
-        //         const docref    = doc(collection(firestore, 'ov_meta'));
-        //         const colref    = collection(docref, 'app_data');
-        //         console.log("what you mean missing permissions", colref);
-        //         const snapshots = await getDocs(colref);
-        //
-        //         if(!snapshots.empty && snapshots.size){
-        //             console.log("ov_meta please", snapshots.size);
-        //             snapshots.forEach((doc) => {
-        //                 if (doc.exists() ){
-        //                     const data = doc.data();
-        //                     return data;
-        //                 }
-        //             });
-        //         }
-        //
-        //         return null;
-        //     } catch (error) {
-        //         console.error('Error getting ov_meta: ', error);
-        //     }
-        //
-        // }
-        // const ov_meta = get_ov_meta();
+
     }, [session_context]);
 
     return (
