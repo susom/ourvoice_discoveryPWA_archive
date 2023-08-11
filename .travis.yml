@@ -27,5 +27,5 @@ script:
     set -ex;
     npm install && \
     npm run build && \
-    gcloud app deploy app.yaml
+    gcloud app deploy $APP_YAML_NAME
     set +x
