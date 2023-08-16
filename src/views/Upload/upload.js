@@ -101,11 +101,7 @@ function ViewBox(props){
                     )
                 })}
 
-                <Row className={`btn_row`}>
-                    <Col>
-                        <button className={`btn btn-danger`} onClick={clearLocal}>{delete_stored_text}</button>
-                    </Col>
-                </Row>
+                
             </Container>
 
     )
