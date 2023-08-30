@@ -164,7 +164,8 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
             "name" : "photo_" + photo_i + ".jpg",
             "rotate" : rotate,
             "tags" : tags,
-            "text_comment" : textComment
+            "text_comment" : textComment,
+            "timestamp": Date.now() 
         }
 
         if(session_context.previewPhoto === null) {
