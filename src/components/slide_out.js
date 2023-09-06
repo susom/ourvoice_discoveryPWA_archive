@@ -13,6 +13,9 @@ import { buildFileArr, shallowMerge, getFileByName } from "./util";
 
 import "../assets/css/slideout.css";
 
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 function PhotoList({data, closeSlideOut}){
     const navigate          = useNavigate();
     const session_context   = useContext(SessionContext);
@@ -43,49 +46,57 @@ function SlideOut(props){
     const [walkSumm, setWalkSumm]           = useState([]);
 
     useEffect(() => {
-        async function prepSummary(doc_id, photos){
+        async function prepSummary(doc_id, photos) {
             // Query the database for records where fileName matches any value in the array
             const files_arr = buildFileArr(doc_id, photos);
-            const files     = await db_files.files.where('name').anyOf(files_arr).toArray();
+            const files = await db_files.files.where('name').anyOf(files_arr).toArray();
 
-            const summ_preview  = photos.map((photo, index) => {
-                //use dexie to get photo + audio
-                const photo_name    = doc_id + "_" + photo.name;
-                const photo_base64  = getFileByName(files, photo_name);
+            const summ_preview = photos.map((photo, index) => {
+                // Use Dexie to get photo + audio
+                const photo_name = doc_id + "_" + photo.name;
+                const photo_base64 = getFileByName(files, photo_name); // Assuming this gets the base64 data
 
-                for(let audio_i in photo.audios){
-                    const audio_name        = doc_id + "_" + audio_i;
-                    const update_obj        = {};
-                    update_obj[audio_name]  = getFileByName(files, audio_name);
-                    //oh now shallowMerge works, but not deepMerge?  FML
-                    const copy_audios       = shallowMerge(walkAudios, update_obj);
+                for (let audio_i in photo.audios) {
+                    const audio_name = doc_id + "_" + audio_i;
+                    const update_obj = {};
+                    update_obj[audio_name] = getFileByName(files, audio_name);
+                    const copy_audios = shallowMerge(walkAudios, update_obj);
                     setWalkAudios(copy_audios);
                 }
 
-                const img_preview   = <img src={photo_base64} className={`slide_preview`} alt={`preview`}/>;
-                const has_audios    = Object.keys(photo.audios).length
+                const img_preview = <img src={photo_base64} className={`slide_preview`} alt={`preview`} />;
+
+                const vote_type = session_context.data.project_info.thumbs === 2 ? "smilies" : "thumbs";
+                const vote_good = photo.goodbad === 1 || photo.goodbad === 3 ? <span className={`icon ${vote_type} up`}>smile</span> : "";
+                const vote_bad = photo.goodbad === 2 || photo.goodbad === 3 ? <span className={`icon ${vote_type} down`}>frown</span> : "";
+                const has_text = photo.text_comment !== "" ? <span className={`icon keyboard`}>keyboard</span> : "";
+                const has_audios = Object.keys(photo.audios).length
                     ? Object.keys(photo.audios).map((audio_name, idx) => {
                         return <Button
                             key={idx}
                             className="icon audio"
-                            onClick={(e) => {
-                                handleAudio(e, doc_id + "_" + audio_name) }
-                            }>{idx + 1 }</Button>
+                            onClick={(e) => { handleAudio(e, doc_id + "_" + audio_name); }}
+                        >{idx + 1}</Button>;
                     })
                     : "";
+                const has_tags = photo.hasOwnProperty("tags") && photo.tags.length ? <span className={`icon tags`}>{photo.tags.length}</span> : "";
 
-                const vote_type     = session_context.data.project_info.thumbs === 2 ? "smilies" : "thumbs";
-                const vote_good     = photo.goodbad === 1 || photo.goodbad === 3 ? <span className={`icon ${vote_type} up`}>smile</span> : "";
-                const vote_bad      = photo.goodbad === 2 || photo.goodbad === 3 ? <span className={`icon ${vote_type} down`}>frown</span> : "";
-                const has_text      = photo.text_comment !== "" ? <span className={`icon keyboard`} >keyboard</span> : "";
-                const has_tags      = photo.hasOwnProperty("tags") && photo.tags.length ? <span className={`icon tags`}>{photo.tags.length}</span> : "";
-
-                return {"photo_id" : index ,"img_preview" : img_preview, "vote_good" : vote_good, "vote_bad" : vote_bad, "has_text": has_text, "has_audios" : has_audios, "has_tags" : has_tags}
+                return {
+                    "photo_id": index,
+                    "img_preview": img_preview,
+                    "photo_base64": photo_base64, // Store the base64 data here
+                    "vote_good": vote_good,
+                    "vote_bad": vote_bad,
+                    "has_text": has_text,
+                    "has_audios": has_audios,
+                    "has_tags": has_tags
+                };
             });
 
-            //SAVE IT TO STATE
+            // Save it to state
             setWalkSumm(summ_preview);
-        };
+        }
+
 
         //TODO CONSOLIDATE THESE
         if(!session_context.data.in_walk && session_context.previewWalk){
@@ -144,6 +155,29 @@ function SlideOut(props){
         session_context.setSlideOpen(false);
     }
 
+    const downloadPhotos = async () => {
+        const zip = new JSZip();
+        const photoFolder = zip.folder("photos");
+        const audioFolder = zip.folder("audios"); // Create a folder for audios
+
+        // Loop over walkSumm and gather photos
+        for (const item of walkSumm) {
+            const base64Data = item.photo_base64.split(",")[1];
+            const photoBlob = await fetch(item.photo_base64).then(response => response.blob());
+            photoFolder.file(`photo_${item.photo_id}.jpg`, photoBlob, { binary: true });
+        }
+
+        // Loop over walkAudios and gather audios
+        for (const [audioName, audioBlob] of Object.entries(walkAudios)) {
+            audioFolder.file(`${audioName}`, audioBlob, { binary: true });
+        }
+
+        // Generate zip and trigger download
+        zip.generateAsync({ type: "blob" }).then(blob => {
+            saveAs(blob, "photos_and_audios.zip");
+        });
+    }
+
 
     const walk_summary_text = session_context.getTranslation("walk_summary");
     const project_text      = session_context.getTranslation("project");
@@ -167,11 +201,14 @@ function SlideOut(props){
                     </hgroup>
                     {
                         !walkSumm.length
-                            ? (<em>{no_photos_text}</em>)
+                            ? <em>{no_photos_text}</em>
                             : walkSumm.map((item,idx) => {
                                 return (<PhotoList key={idx} data={item} closeSlideOut={handleClose}/>)
                             })
                     }
+
+                    { walkSumm.length ? <Button onClick={downloadPhotos}>Download All Photos & Audios</Button> : "" }
+
                 </div>
             </Slider>)
 }
