@@ -34,8 +34,10 @@ function ViewProjectDetails(props){
 
 
     async function checkLogin(){
+        let upperCasePcode = props.pcode.toUpperCase();
+
         const q = query(collection(firestore, "ov_projects")
-            , where("code", "==", props.pcode)
+            , where("code", "==", upperCasePcode)
             , where("project_pass", "==", props.pword)
         );
 
@@ -51,7 +53,7 @@ function ViewProjectDetails(props){
                         props.projectSignInOut(true);
 
                         const active_project_data = {
-                            project_id              : props.pcode,
+                            project_id              : upperCasePcode,
                             audio_comments          : parseInt(doc.get("audio_comments")),
                             custom_take_photo_text  : doc.get("custom_take_photo_text"),
                             expire_date             : doc.get("expire_date"),
@@ -103,9 +105,11 @@ function ViewProjectDetails(props){
     const getPostInfo = async (e) => {
         e.preventDefault();
 
-        if(props.pcode !== "" && props.pword !== ""){
+        let upperCasePcode = props.pcode.toUpperCase();
 
-            const active_project = db_project.active_project.where({project_id: props.pcode}).first();
+        if(upperCasePcode !== "" && props.pword !== ""){
+
+            const active_project = db_project.active_project.where({project_id: upperCasePcode}).first();
             active_project.then(async function(project_data) {
                 const diff_hours = project_data ? tsDiffInHours(project_data["timestamp"] , Date.now()) : 999;
                 if(diff_hours <= 24){
@@ -162,7 +166,7 @@ function ViewProjectDetails(props){
             <div className="project_login">
                 <p className="signin_status">{status}</p>
                 <label><span>{project_id_text}</span>
-                    <span className="input_field"><input type="text" className={props.signedIn ? "signedIn" : ""} disabled={props.signedIn && session_context.data.project_id !== null ? true : false} onChange={ e => props.setPcode(e.target.value) } value={props.pcode} placeholder='eg; ABCD'/></span>
+                    <span className="input_field"><input type="text" className={props.signedIn ? "signedIn" : ""} disabled={props.signedIn && session_context.data.project_id !== null ? true : false} onChange={ e => props.setPcode(e.target.value) } value={props.pcode.toUpperCase()} placeholder='eg; ABCD'/></span>
                 </label>
                 {pw_or_language}
             </div>
