@@ -19,6 +19,15 @@ import {updateContext, tsDiffInHours} from "../../components/util";
 import "../../assets/css/view_home.css";
 import PermissionModal from '../../components/device_permisssions';
 
+// service worker caching doesnt seem to be working.
+// will load these essential images here since the user absolutely must be online
+// to sign in at this point before the app can be usable offline
+import pic_walk_with_another from "../../assets/images/pic_walk_with_another.png";
+import pic_danger_2 from "../../assets/images/pic_danger_2.png";
+import pic_no_faces from "../../assets/images/pic_no_faces.png";
+import pic_ask_help from "../../assets/images/pic_ask_help.png";
+import icon_smilies from "../../assets/images/icon_smilies.png";
+
 function ViewProjectDetails(props){
     const session_context           = useContext(SessionContext);
     const walk_context              = useContext(WalkContext);
@@ -332,6 +341,14 @@ function ViewBox(props){
                 />
                 <AlertModal show={showModal} handleCancel={handleCancel} handleOK={handleOK} message={alertMessage}/>
                 {/*<PermissionModal permissionNames={["camera","geo"]} />*/}
+
+                <div style={{ width: 0, height: 0, overflow: "hidden", visibility: "hidden" }}>
+                    <img src={pic_walk_with_another} alt="Hidden" />
+                    <img src={pic_danger_2} alt="Hidden" />
+                    <img src={pic_no_faces} alt="Hidden" />
+                    <img src={pic_ask_help} alt="Hidden" />
+                    <img src={icon_smilies} alt="Hidden" />
+                </div>
             </div>
     )
 }
