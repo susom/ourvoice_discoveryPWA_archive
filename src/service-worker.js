@@ -23,7 +23,15 @@ clientsClaim();
 // Their URLs are injected into the manifest variable below.
 // This variable must be present somewhere in your service worker file,
 // even if you decide not to use precaching. See https://cra.link/PWA
-precacheAndRoute(self.__WB_MANIFEST);
+// Add the additional images you want to cache at the beginning of the service worker's lifecycle
+precacheAndRoute([
+    ...self.__WB_MANIFEST,
+    { url: '/src/assets/images/pic_walk_with_another.png', revision: '1' },
+    { url: '/src/assets/images/pic_danger_2.png', revision: '1' },
+    { url: '/src/assets/images/pic_no_faces.png', revision: '1' },
+    { url: '/src/assets/images/pic_ask_help.png', revision: '1' },
+    { url: '/src/assets/images/icon_smilies.png', revision: '1' },
+]);
 
 // Set up App Shell-style routing, so that all navigation requests
 // are fulfilled with your index.html shell. Learn more at
