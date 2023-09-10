@@ -39,6 +39,7 @@ export const WalkmapContextProvider = ({children}) => {
                     const data_copy = data;
                     data_copy.push(geo_point);
                     setData(data_copy);
+
                 }
             }, (err) => {
                 console.log(err);
@@ -49,6 +50,7 @@ export const WalkmapContextProvider = ({children}) => {
     };
 
     useEffect(() => {
+        // console.log("WalkmapContext useEffect triggered", startTracking, session_context.data.in_walk);
         let interval;
         if (startTracking && session_context.data.in_walk) {
             interval = setInterval(updatePosition, 5000);

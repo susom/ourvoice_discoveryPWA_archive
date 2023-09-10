@@ -27,9 +27,9 @@ function WalkStart(props) {
         setCustomPhotoPrompt(session_context.data.project_info.custom_take_photo_text);
     }, [session_context.data.project_info.custom_take_photo_text]);
 
-    useEffect(() => {
+    const initGeoTracking = (permissionGranted) => {
         walkmap_context.startGeoTracking();
-    }, []);
+    };
 
     const takePhotoHandler = (e) => {
         e.preventDefault();
@@ -77,7 +77,10 @@ function WalkStart(props) {
             <Container className="content walk walk_start" >
                 <Row id="walk_start" className="panel">
                     <Col className="content">
-                        <PermissionModal permissionNames={["camera","geo"]} onPermissionGranted={walkmap_context.startGeoTracking} />
+                        <PermissionModal
+                            permissionNames={["camera","geo"]}
+                            onPermissionChanged={initGeoTracking}
+                        />
 
                         <Container>
                             <Row>

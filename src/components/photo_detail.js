@@ -5,6 +5,8 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import { db_walks, db_files } from "../database/db";
 import { updateContext, hasGeo, cloneDeep, getFileByName, buildFileArr, shallowMerge } from "../components/util";
 
+import usePermissions from './usePermissions';
+
 import { SessionContext } from "../contexts/Session";
 import { WalkContext } from "../contexts/Walk";
 import AudioRecorderWithIndexDB from "../components/audio_recorder";
@@ -12,6 +14,7 @@ import AudioRecorderWithIndexDB from "../components/audio_recorder";
 import PermissionModal from './device_permisssions';
 
 import icon_walk from "../assets/images/icon_walk.png";
+import { MicFill } from 'react-bootstrap-icons';
 
 function ViewBox(props){
     return (
@@ -24,6 +27,8 @@ function ViewBox(props){
 function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail}){
     const session_context   = useContext(SessionContext);
     const walk_context      = useContext(WalkContext);
+
+    const [permissions] = usePermissions();
 
     const [upVote, setUpVote]               = useState(false);
     const [downVote, setDownVote]           = useState(false);
@@ -38,6 +43,21 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
 
     const [existingFiles, setExistingFiles] = useState([]);
     const has_audio_comments                = session_context.data.project_info.hasOwnProperty("audio_comments") && session_context.data.project_info["audio_comments"];
+
+    const [showAudioPermissionModal, setShowAudioPermissionModal]           = useState(false);
+    const [hasAudioPermissionModalShown, setHasAudioPermissionModalShown]   = useState(false);
+
+    const handleAudioPermission = () => {
+        setShowAudioPermissionModal(true);
+    }
+
+    const onPermissionChanged = (granted) => {
+        session_context.setIsAudioPermissionGranted(granted);
+    };
+
+    useEffect(() => {
+        console.log("hasAudioPermissionModalShown changed:", hasAudioPermissionModalShown);
+    }, [hasAudioPermissionModalShown]);
 
     useEffect(() => {
         if(hasGeo()){
@@ -276,20 +296,38 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
                                             document.getElementById("text_comment").focus();
                                         }}>keyboard</a>
                                     </Col>
+
                                     <Col xs={{span: 9}} className="record_audio">
                                         {
                                             session_context.data.project_info["audio_comments"] ? (
                                                 <>
-                                                    <PermissionModal permissionNames={["audio"]} />
-                                                    <AudioRecorderWithIndexDB stateAudios={audios} stateSetAudios={setAudios}/>
+                                                    {showAudioPermissionModal && !hasAudioPermissionModalShown && (
+                                                        <PermissionModal
+                                                            permissionNames={["audio"]}
+                                                            closeModal={() =>  {
+                                                                setShowAudioPermissionModal(false);
+                                                                setHasAudioPermissionModalShown(true);
+                                                            }}
+                                                            onPermissionChanged={onPermissionChanged}
+                                                        />
+                                                    )}
 
-                                                    <div id="saved_audio">
-                                                        {
-                                                            Object.keys(audios).map((key, idx) => {
-                                                                return <a href="/#" className="saved" key={key} onClick={(e) => { handleAudio(e, key) }}>{idx+1}</a>
-                                                            })
-                                                        }
-                                                    </div>
+                                                    {!session_context.isAudioPermissionGranted ? (
+                                                        <a className={`decoy_audio`} onClick={handleAudioPermission}>
+                                                            <MicFill size={18}/>
+                                                        </a>
+                                                    ) : (
+                                                        <>
+                                                            <AudioRecorderWithIndexDB stateAudios={audios} stateSetAudios={setAudios} />
+                                                            <div id="saved_audio">
+                                                                {
+                                                                    Object.keys(audios).map((key, idx) => {
+                                                                        return <a href="/#" className="saved" key={key} onClick={(e) => { handleAudio(e, key) }}>{idx+1}</a>
+                                                                    })
+                                                                }
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </>
                                             )
                                             : ""

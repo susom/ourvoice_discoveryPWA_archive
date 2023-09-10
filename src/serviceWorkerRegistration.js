@@ -21,7 +21,7 @@ const isLocalhost = Boolean(
 );
 
 export function register(config) {
-  console.log("register service worker, should never even see any console .logs within in local host");
+  // console.log("register service worker, should never even see any console .logs within in local host");
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
@@ -53,7 +53,7 @@ export function register(config) {
       }
     });
   } else{
-    console.log("in localhost so no service worker, just set the interval in the app");
+    // console.log("in localhost so no service worker, just set the interval in the app");
     fallbackSync();
   }
 }

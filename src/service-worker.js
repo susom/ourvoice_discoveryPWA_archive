@@ -80,7 +80,7 @@ self.addEventListener('activate', event => {
 });
 
 //starts the indexdb > firestore sync as soon as SW is registered.
-console.log("sw registered so kick off syncData interval 60000");
+// console.log("sw registered so kick off syncData interval 60000");
 syncData();
 
 //how to use syncManager ? is syncManager appropriate for what im trying to do?

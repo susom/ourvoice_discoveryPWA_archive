@@ -101,7 +101,7 @@ function batchPushToFirestore(walk_data){
         console.log('in SW and upload the indivdual files' , files_arr);
         uploadFiles(files_arr);
 
-        console.log('in SW now update the walks in indexDB');
+        // console.log('in SW now update the walks in indexDB');
         bulkUpdateDb(db_walks, "walks", update_records);
 
         //dispatch an event that the upload table can listen for?
@@ -130,7 +130,7 @@ export async function syncData() {
 
     setInterval(async () => {
         // Query IndexedDB for new data
-        console.log("every 60 seconds, navigator", navigator.onLine);
+        // console.log("every 60 seconds, navigator", navigator.onLine);
 
         if(navigator.onLine){
             signIn();

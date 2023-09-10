@@ -34,6 +34,9 @@ export const SessionContextProvider = ({children}) => {
     const [translations, setTranslations]               = useState(defaultTranslations);
     const [version, setVersion]                         = useState("v 4.0.0");
 
+    const [isAudioPermissionGranted, setIsAudioPermissionGranted]   = useState(false);
+    const [isGeoPermissionGranted, setIsGeoPermissionGranted]       = useState(false);
+
     const isAuthenticated = useAnonymousSignIn();
 
     useEffect(() => {
@@ -50,9 +53,8 @@ export const SessionContextProvider = ({children}) => {
                     const version       = appDataSnapshot.get('version');
                     setVersion(version);
 
-                    console.log("useEffect translations SHOULD ONLY SHOW ONCE", appTextData);
-                    console.log("useEffect version", version);
-
+                    // console.log("useEffect translations SHOULD ONLY SHOW ONCE", appTextData);
+                    // console.log("useEffect version", version);
                 }
             } catch (error) {
                 console.error("Error getting documents: ", error);
@@ -65,13 +67,13 @@ export const SessionContextProvider = ({children}) => {
     }, [isAuthenticated]);
 
     useEffect(() => {
-        console.log("Translations have been updated SHOULD ONLY SHOW AFTER THE ABOVE USE EFFECT RIGHT?:", translations);
+        // console.log("Translations have been updated SHOULD ONLY SHOW AFTER THE ABOVE USE EFFECT RIGHT?:", translations);
     }, [translations]);
 
 
     useEffect(() => {
-        console.log("Selected language: ", selectedLanguage);
-        console.log("Current translations: ", translations);
+        // console.log("Selected language: ", selectedLanguage);
+        // console.log("Current translations: ", translations);
     }, [selectedLanguage]);
 
     const handleLanguageChange = (language) => {
@@ -102,7 +104,7 @@ export const SessionContextProvider = ({children}) => {
 
 
     return (
-        <SessionContext.Provider value={{data, setData,selectedLanguage,handleLanguageChange, translations, getTranslation, resetData, slideOpen, setSlideOpen, previewPhoto, setPreviewPhoto, previewWalk, setPreviewWalk, previewWalkID, setPreviewWalkID, previewProjID, setPreviewProjID, lastUploadsUpdated, updateLastUploadsUpdated, version}}>
+        <SessionContext.Provider value={{data, setData,selectedLanguage,handleLanguageChange, translations, getTranslation, resetData, slideOpen, setSlideOpen, previewPhoto, setPreviewPhoto, previewWalk, setPreviewWalk, previewWalkID, setPreviewWalkID, previewProjID, setPreviewProjID, lastUploadsUpdated, updateLastUploadsUpdated, version, isAudioPermissionGranted, setIsAudioPermissionGranted, isGeoPermissionGranted, setIsGeoPermissionGranted}}>
             {children}
         </SessionContext.Provider>
     );
