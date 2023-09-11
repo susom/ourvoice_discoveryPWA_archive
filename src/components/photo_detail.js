@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from 'react-bootstrap';
 
@@ -14,7 +14,7 @@ import AudioRecorderWithIndexDB from "../components/audio_recorder";
 import PermissionModal from './device_permisssions';
 
 import icon_walk from "../assets/images/icon_walk.png";
-import { MicFill } from 'react-bootstrap-icons';
+import { MicFill, ChevronExpand, ChevronContract } from 'react-bootstrap-icons';
 
 function ViewBox(props){
     return (
@@ -40,6 +40,10 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
     const [spotGeo, setSpotGeo]             = useState({});
     const [photoPreview, setPhotoPreview]   = useState(icon_walk);
     const [audioPlaying, setAudioPlaying]   = useState(null);
+
+    const [isExpanded, setIsExpanded]                   = useState(false);
+    const [shouldShowExpander, setShouldShowExpander]   = useState(false);
+    const projectTagsRef                                = useRef(null);  // Create a ref for the project tags div
 
     const [existingFiles, setExistingFiles] = useState([]);
     const has_audio_comments                = session_context.data.project_info.hasOwnProperty("audio_comments") && session_context.data.project_info["audio_comments"];
@@ -258,6 +262,18 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
         }
     }
 
+    const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    useEffect(() => {
+        // Measure the height of the project_tags div
+        const tagsHeight = projectTagsRef.current ? projectTagsRef.current.offsetHeight : 0;
+
+        // Decide whether to show the expander or not (e.g., height > 50)
+        setShouldShowExpander(tagsHeight > 60);
+    }, [isExpanded]);  // Re-check when isExpanded changes
+
     const why_this_text     = session_context.getTranslation("why_this_photo");
     const what_about_text   = session_context.getTranslation("project_tags");
     const good_or_bad_text  = session_context.getTranslation("good_or_bad");
@@ -354,15 +370,19 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
                                                 <Col xs={{span: 12}} className="consentbox">{what_about_text}
                                                 </Col>
                                             </Row>
-                                            <Row className="project_tags">
+                                            <Row className={`project_tags outer ${isExpanded ? "expanded" : ""}`} >
                                             {
                                                 session_context.data.project_info.tags.length
-                                                    ? <Col id="project_tags" xs={{span: 12}}>
+                                                    ? <Col id="project_tags" xs={{span: 12}} ref={projectTagsRef}>
                                                         {session_context.data.project_info.tags.map((item)=>(
                                                             <a href="/#" className={`project_tag ${tags.includes(item) ? 'on' : ''}`} key={item} onClick={(e)=> {
                                                                 saveTag(e, item);
                                                             }}>{item}</a>
                                                         ))}
+
+                                                        {shouldShowExpander && (<span className="toggle-button project_tags_exapando" onClick={toggleExpand}>
+                                                            {isExpanded ? <ChevronContract size={16}/> : <ChevronExpand size={16}/> }
+                                                        </span>)}
                                                     </Col>
                                                     : <Col id="no_tags" xs={{span: 12}}><em>{no_tags_text}</em></Col>
                                             }
