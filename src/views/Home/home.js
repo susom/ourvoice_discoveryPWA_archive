@@ -152,7 +152,7 @@ function ViewProjectDetails(props){
         <label><span>{language_text}</span>
             <span className="input_field">
                 {language ? (
-                    <select onChange={ (e) => session_context.handleLanguageChange(e.target.value) }>
+                    <select onChange={ (e) => session_context.handleLanguageChange(e.target.value) } value={session_context.selectedLanguage}>
                         {language.map((lang) => (
                             <option key={lang.lang} value={lang.lang}>
                                 {lang.language}
