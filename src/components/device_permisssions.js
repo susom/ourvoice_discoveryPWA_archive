@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import usePermissions from './usePermissions';
 import PermissionButton from './PermissionButton';
 import {getDeviceType} from "./util";
+import {useNavigate} from 'react-router-dom';
 
 import {Lock, MicFill, CameraVideoFill, GeoAltFill } from "react-bootstrap-icons";
 import {Modal} from "react-bootstrap";
@@ -53,6 +54,7 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
         }
     }, [permissionNames, permissions, loadingPermissions]);
 
+    const navigate = useNavigate();
 
     return (
         <Modal
@@ -61,6 +63,8 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
                 if (!deniedPermissions.includes("geo") && !deniedPermissions.includes("camera")) {
                     setIsOpen(false);
                     closeModal();
+                }else{
+                    navigate("/home");
                 }
             }}
             className="permissions_spotCheck"
