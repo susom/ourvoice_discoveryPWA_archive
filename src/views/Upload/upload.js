@@ -72,36 +72,42 @@ function ViewBox(props){
                     </Col>
                 </Row>
 
-                <Row className={`table_header`}>
-                    <Col sm={{span:2}} xs={{span:2}}><span>{date_text}</span></Col>
-                    <Col sm={{span:2}} xs={{span:2}}><span>{project_text}</span></Col>
-                    <Col sm={{span:2}} xs={{span:2}}><span>{id_text}</span></Col>
-                    <Col sm={{span:2}} xs={{span:2}}><span><img alt='' className={`hdr_icon`} src={icon_camera_black}/></span></Col>
-                    <Col sm={{span:2}} xs={{span:2}}><span><img alt='' className={`hdr_icon`} src={icon_audio_comment_black}/></span></Col>
-                    <Col sm={{span:2}} xs={{span:2}}><span>{status_text}</span></Col>
-                </Row>
+                <table className={`upload_table`} >
+                    <thead>
+                    <tr className="table_header" >
+                        <th>{date_text}</th>
+                        <th>{project_text}</th>
+                        <th>{id_text}</th>
+                        <th><img alt="" className="hdr_icon" src={icon_camera_black} /></th>
+                        <th><img alt="" className="hdr_icon" src={icon_audio_comment_black} /></th>
+                        <th>{status_text}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {walks.map((item) => {
+                        if (!item.photos.length) {
+                            return false;
+                        }
+                        return (
+                            <tr className="table_row list_data" key={item.id} >
+                                <td>{tsToYmd(item.timestamp)}</td>
+                                <td>{item.project_id}</td>
+                                <td className="walkid" onClick={(e) => {
+                                    e.preventDefault();
+                                    session_context.setPreviewWalk(item.id);
+                                    session_context.setSlideOpen(true);
+                                }}>
+                                    {item.walk_id}
+                                </td>
+                                <td>{item.photos.length}</td>
+                                <td>{countAudios(item.photos) + countTexts(item.photos)}</td>
+                                <td>{item.uploaded ? <CloudUploadFill className={'color_success'}/> : <CloudUpload className={'color_pending'}/>}</td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
 
-                {walks.map(item => {
-                    if(!item.photos.length){
-                        return false;
-                    }
-                    return (
-                        <Row className={`table_row list_data`} key={item.id}>
-                            <Col sm={{span:2}}  xs={{span:2}}>{tsToYmd(item.timestamp)}</Col>
-                            <Col sm={{span:2}}  xs={{span:2}}>{item.project_id}</Col>
-                            <Col sm={{span:2}}  xs={{span:2}} className={`walkid`} onClick={(e) => {
-                                e.preventDefault();
-                                session_context.setPreviewWalk(item.id);
-                                session_context.setSlideOpen(true);
-                            }}>{item.walk_id}</Col>
-                            <Col sm={{span:2}}  xs={{span:2}}>{item.photos.length}</Col>
-                            <Col sm={{span:2}}  xs={{span:2}}>{countAudios(item.photos) + countTexts(item.photos)}</Col>
-                            <Col sm={{span:2}}  xs={{span:2}}>{item.uploaded ? <CloudUploadFill className={'color_success'}/> : <CloudUpload className={'color_pending'}/>}</Col>
-                        </Row>
-                    )
-                })}
-
-                
             </Container>
 
     )
