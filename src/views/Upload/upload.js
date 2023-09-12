@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
-import { CloudUploadFill, CloudUpload} from 'react-bootstrap-icons';
+import { CloudUploadFill, CloudUpload, CloudSlashFill, CloudArrowUpFill} from 'react-bootstrap-icons';
 
 import {db_files, db_logs, db_project, db_walks} from "../../database/db";
 import {SessionContext} from "../../contexts/Session";
@@ -10,6 +10,22 @@ import {tsToYmd, updateContext} from "../../components/util";
 import "../../assets/css/view_upload.css";
 import icon_camera_black from "../../assets/images/icon_camera_black.png";
 import icon_audio_comment_black from "../../assets/images/icon_audio_comment_black.png";
+
+function renderStatusIcon(item) {
+    const status = item.status;
+
+    switch(status) {
+        case 'IN_PROGRESS':
+            return <CloudArrowUpFill className={'color_in_progress'}/>; // Use a different color class for in-progress
+        case 'COMPLETE':
+            return <CloudUploadFill className={'color_success'}/>;
+        case 'ERROR':
+            return <CloudSlashFill className={'color_error'}/>; // Use a different color class for error
+        default:
+            return <CloudUpload className={'color_pending'}/>;
+    }
+}
+
 function ViewBox(props){
     const [walks, setWalks] = useState(props.walks);
     const session_context   = useContext(SessionContext);
@@ -21,6 +37,8 @@ function ViewBox(props){
     const instructions_upload_text  = session_context.getTranslation("instructions_upload");
     const data_uploaded_text        = session_context.getTranslation("data_uploaded");
     const data_pending_text         = session_context.getTranslation("data_pending");
+    const data_in_progress          = session_context.getTranslation("data_in_progress");
+    const data_error                = session_context.getTranslation("data_error");
     const date_text                 = session_context.getTranslation("date");
     const project_text              = session_context.getTranslation("project");
     const id_text                   = session_context.getTranslation("walk_id");
@@ -68,7 +86,16 @@ function ViewBox(props){
                         <p className="instructions_upload">
                             <span>{instructions_upload_text}</span>
                         </p>
-                        <span><CloudUploadFill className={`color_success`}/> {data_uploaded_text}</span> <span> | </span> <span><CloudUpload className={`color_pending`}/> {data_pending_text}</span>
+
+                        <div className={`upload_legend`}>
+                            <span><CloudUpload className={`color_pending`}/> <i>{data_pending_text}</i></span>
+                            <span> | </span>
+                            <span><CloudArrowUpFill className={`color_in_progress`}/> <i>{data_in_progress}</i></span>
+                            <span> | </span>
+                            <span><CloudUploadFill className={`color_success`}/> <i>{data_uploaded_text}</i></span>
+                            <span> | </span>
+                            <span><CloudSlashFill className={`color_error`}/> <i>{data_error}</i></span>
+                        </div>
                     </Col>
                 </Row>
 
@@ -101,7 +128,7 @@ function ViewBox(props){
                                 </td>
                                 <td>{item.photos.length}</td>
                                 <td>{countAudios(item.photos) + countTexts(item.photos)}</td>
-                                <td>{item.uploaded ? <CloudUploadFill className={'color_success'}/> : <CloudUpload className={'color_pending'}/>}</td>
+                                <td>{renderStatusIcon(item)}</td>
                             </tr>
                         );
                     })}

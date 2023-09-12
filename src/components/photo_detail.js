@@ -60,10 +60,6 @@ function PhotoDetail({setDataUri, dataUri, viewPhotoDetail, setViewPhotoDetail})
     };
 
     useEffect(() => {
-        console.log("hasAudioPermissionModalShown changed:", hasAudioPermissionModalShown);
-    }, [hasAudioPermissionModalShown]);
-
-    useEffect(() => {
         if(hasGeo()){
             navigator.geolocation.getCurrentPosition(function(position) {
                 const geoDataPhoto = {latitude : position.coords.latitude, longitude : position.coords.longitude};

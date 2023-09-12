@@ -13,6 +13,7 @@ const context_init = {
     ,timestamp  : null
     ,uploaded   : 0
     ,complete   : 0
+    ,status     : 'PENDING' // can be 'PENDING', 'COMPLETE', 'IN_PROGRESS', or 'ERROR'
 }
 
 export const WalkContext = createContext({
