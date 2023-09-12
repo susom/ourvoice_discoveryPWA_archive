@@ -72,40 +72,44 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
             <Modal.Body>
                 {deniedPermissions.length > 0 && (
                     <div>
-                        <p>The {deniedPermissionsString} permission(s) have been denied. They can be re-enabled by following these steps:</p>
+                        <p>Essential {deniedPermissionsString} permission(s) have been denied. To re-enable:</p>
+
+                        {device_type === 'Android' ? (
+                            <>
+                                <h5>On Android with Chrome:</h5>
+                                <ul>
+                                    <li>Tap the lock icon beside the URL.</li>
+                                    <li>Select "Site Settings".</li>
+                                    <li>Go to "Permissions".</li>
+                                    <li>Set each required permission to "Allow".</li>
+                                </ul>
+                            </>
+                        ) : (
+                            <>
+                                <h5>On iOS with Safari:</h5>
+                                <ul>
+                                    <li>Go to device "Settings".</li>
+                                    <li>Select "Safari".</li>
+                                    <li>Find "Settings for Websites".</li>
+                                    <li>Tap "Clear History and Website Data".</li>
+                                    <li>Adjust Permissions:
+                                        <ul>
+                                            <li>If OurVoice is listed, remove it.</li>
+                                            <li>If not, set permissions to "Ask" or "Allow".</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </>
+                        )}
 
                         <h5>If Installed to Home Screen:</h5>
+                        <p>After adjusting browser permissions:</p>
                         <ul>
-                            <li>Delete app from home screen and reinstall it from a browser</li>
+                            <li>Delete OurVoice app from home screen.</li>
+                            <li>Reinstall via web browser.</li>
                         </ul>
 
-                        <h5>If in Browser:</h5>
-                        <ul>
-                        {device_type === 'Android' ?
-                        (<li>
-                            <h6>On Chrome</h6>
-                            <ul>
-                                <li>Click on the "lock" icon in the browser bar</li>
-                                <li>Click on "Permissions"</li>
-                                <li>Click on "Reset Permissions"</li>
-                            </ul>
-                        </li>) :
-                        (<li>
-                            <h6>On Safari</h6>
-                            <ul>
-                                <li>In the device "Settings" app</li>
-                                <li>Scroll down to and click on Safari</li>
-                                <li>Scroll down to "Settings for Websites" section</li>
-                                <li>Click on the individual Settings (eg "Camera") and ...
-                                    <ul>
-                                        <li>Delete the OurVoice website from the list...</li>
-                                        <li>Or If there is no website list, simply reset the permission to "Ask"</li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>)
-                        }
-                        </ul>
+                        <p>Doing so should re-enable the required permissions for OurVoice.</p>
                     </div>
                 )}
                 <div className="permissions">
