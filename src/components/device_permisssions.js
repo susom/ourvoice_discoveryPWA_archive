@@ -3,8 +3,7 @@ import usePermissions from './usePermissions';
 import PermissionButton from './PermissionButton';
 import {getDeviceType} from "./util";
 import {useNavigate} from 'react-router-dom';
-
-import {Lock, MicFill, CameraVideoFill, GeoAltFill } from "react-bootstrap-icons";
+import {Lock, MicFill, CameraVideoFill, GeoAltFill , XCircle} from "react-bootstrap-icons";
 import {Modal} from "react-bootstrap";
 
 import "../assets/css/permissions.css";
@@ -34,10 +33,6 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
         setIsOpen(isPermissionNotGranted);
     }, [permissionNames, permissions, loadingPermissions]);
 
-
-    // Create a ref
-    const onPermissionChangedRef = useRef(null);
-
     // Sync it with the current onPermissionChanged function prop
     useEffect(() => {
         onPermissionChangedRef.current = onPermissionChanged;
@@ -54,23 +49,32 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
         }
     }, [permissionNames, permissions, loadingPermissions]);
 
+    // Create a ref
+    const onPermissionChangedRef = useRef(null);
+
+    const handleButtonClick = () => {
+        console.log("permissions, deniedPermissions",permissions, deniedPermissions);
+        if (!deniedPermissions.includes("geo") && !deniedPermissions.includes("camera") && permissions["geo"] !== "prompt" &&  permissions["camera"] !== "prompt") {
+            setIsOpen(false);
+            if (typeof closeModal === 'function') { // Check if closeModal exists and is a function
+                closeModal();
+            }
+        } else {
+            navigate("/home");
+        }
+    };
+
     const navigate = useNavigate();
 
     return (
         <Modal
             show={modalIsOpen}
-            onHide={() => {
-                if (!deniedPermissions.includes("geo") && !deniedPermissions.includes("camera")) {
-                    setIsOpen(false);
-                    closeModal();
-                }else{
-                    navigate("/home");
-                }
-            }}
+            onHide={handleButtonClick}
             className="permissions_spotCheck"
         >
             <Modal.Header>
                 <Modal.Title>Required Device Permissions</Modal.Title>
+                <XCircle className={`close_permissions_modal`} color="#bbb" size={30} onClick={handleButtonClick}/>
             </Modal.Header>
 
             <Modal.Body>
@@ -80,7 +84,7 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
 
                         {device_type === 'Android' ? (
                             <>
-                                <h5>On Android with Chrome:</h5>
+                                <h5>1) On Android with Chrome:</h5>
                                 <ul>
                                     <li>Tap the lock icon beside the URL.</li>
                                     <li>Select "Site Settings".</li>
@@ -90,7 +94,7 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
                             </>
                         ) : (
                             <>
-                                <h5>On iOS with Safari:</h5>
+                                <h5>1) On iOS with Safari:</h5>
                                 <ul>
                                     <li>Go to device "Settings".</li>
                                     <li>Select "Safari".</li>
@@ -98,7 +102,7 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
                                     <li>Tap "Clear History and Website Data".</li>
                                     <li>Adjust Permissions:
                                         <ul>
-                                            <li>If OurVoice is listed, remove it.</li>
+                                            <li>If Our Voice is listed, remove it.</li>
                                             <li>If not, set permissions to "Ask" or "Allow".</li>
                                         </ul>
                                     </li>
@@ -106,14 +110,14 @@ function PermissionModal({ permissionNames , closeModal, onPermissionChanged, se
                             </>
                         )}
 
-                        <h5>If Installed to Home Screen:</h5>
+                        <h5>2) If app was previously installed:</h5>
                         <p>After adjusting browser permissions:</p>
                         <ul>
-                            <li>Delete OurVoice app from home screen.</li>
+                            <li>Delete Our Voice app from home screen.</li>
                             <li>Reinstall via web browser.</li>
                         </ul>
 
-                        <p>Doing so should re-enable the required permissions for OurVoice.</p>
+                        <p>Doing so should re-enable the required permissions for Our Voice.</p>
                     </div>
                 )}
                 <div className="permissions">
