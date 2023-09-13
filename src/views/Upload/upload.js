@@ -19,8 +19,6 @@ function renderStatusIcon(item) {
             return <CloudArrowUpFill className={'color_in_progress'}/>; // Use a different color class for in-progress
         case 'COMPLETE':
             return <CloudUploadFill className={'color_success'}/>;
-        case 'ERROR':
-            return <CloudSlashFill className={'color_error'}/>; // Use a different color class for error
         default:
             return <CloudUpload className={'color_pending'}/>;
     }
@@ -93,8 +91,6 @@ function ViewBox(props){
                             <span><CloudArrowUpFill className={`color_in_progress`}/> <i>{data_in_progress}</i></span>
                             <span> | </span>
                             <span><CloudUploadFill className={`color_success`}/> <i>{data_uploaded_text}</i></span>
-                            <span> | </span>
-                            <span><CloudSlashFill className={`color_error`}/> <i>{data_error}</i></span>
                         </div>
                     </Col>
                 </Row>
