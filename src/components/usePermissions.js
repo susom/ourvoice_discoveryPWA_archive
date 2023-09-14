@@ -2,10 +2,10 @@ import { useState, useEffect, useContext } from 'react';
 import { SessionContext } from '../contexts/Session';
 
 const usePermissions = () => {
-    const { isAudioPermissionGranted, setIsAudioPermissionGranted, isGeoPermissionGranted, setIsGeoPermissionGranted } = useContext(SessionContext);
+    const { isAudioPermissionGranted, setIsAudioPermissionGranted, isGeoPermissionGranted, setIsGeoPermissionGranted, isCameraPermissionGranted, setIsCameraPermissionGranted } = useContext(SessionContext);
 
     const initialPermissionsState = {
-        camera: 'prompt',
+        camera: isCameraPermissionGranted ? 'granted' : 'prompt',
         audio: isAudioPermissionGranted ? 'granted' : 'prompt',
         geo: isGeoPermissionGranted ? 'granted' : 'prompt',
     };
@@ -42,10 +42,14 @@ const usePermissions = () => {
                 if (isGeoPermissionGranted !== null) {
                     permissionsState.geo = isGeoPermissionGranted ? 'granted' : permissionsState.geo;
                 }
+                if (isCameraPermissionGranted !== null) {
+                    permissionsState.camera = isCameraPermissionGranted ? 'granted' : permissionsState.camera;
+                }
 
                 // Update the session context with the initially queried permissions
                 setIsAudioPermissionGranted(permissionsState.audio === 'granted');
                 setIsGeoPermissionGranted(permissionsState.geo === 'granted');
+                setIsCameraPermissionGranted(permissionsState.camera === 'granted');
 
                 setPermissions(permissionsState);
             });
@@ -67,6 +71,7 @@ const usePermissions = () => {
                         ...prevPermissions,
                         camera: 'granted',
                     }));
+                    setIsCameraPermissionGranted(true);
                     break;
 
                 case 'audio':

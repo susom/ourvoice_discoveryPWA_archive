@@ -36,6 +36,7 @@ export const SessionContextProvider = ({children}) => {
 
     const [isAudioPermissionGranted, setIsAudioPermissionGranted]   = useState(false);
     const [isGeoPermissionGranted, setIsGeoPermissionGranted]       = useState(false);
+    const [isCameraPermissionGranted, setIsCameraPermissionGranted] = useState(false);
 
     const isAuthenticated = useAnonymousSignIn();
 
@@ -104,7 +105,7 @@ export const SessionContextProvider = ({children}) => {
 
 
     return (
-        <SessionContext.Provider value={{data, setData,selectedLanguage,handleLanguageChange, translations, getTranslation, resetData, slideOpen, setSlideOpen, previewPhoto, setPreviewPhoto, previewWalk, setPreviewWalk, previewWalkID, setPreviewWalkID, previewProjID, setPreviewProjID, lastUploadsUpdated, updateLastUploadsUpdated, version, isAudioPermissionGranted, setIsAudioPermissionGranted, isGeoPermissionGranted, setIsGeoPermissionGranted}}>
+        <SessionContext.Provider value={{data, setData,selectedLanguage,handleLanguageChange, translations, getTranslation, resetData, slideOpen, setSlideOpen, previewPhoto, setPreviewPhoto, previewWalk, setPreviewWalk, previewWalkID, setPreviewWalkID, previewProjID, setPreviewProjID, lastUploadsUpdated, updateLastUploadsUpdated, version, isAudioPermissionGranted, setIsAudioPermissionGranted, isGeoPermissionGranted, setIsGeoPermissionGranted, isCameraPermissionGranted, setIsCameraPermissionGranted}}>
             {children}
         </SessionContext.Provider>
     );
