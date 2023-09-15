@@ -8,6 +8,9 @@ function GMap(props){
         width: "100%"
     };
 
+
+    console.log("coordinates",coordinates);
+
     const center = coordinates.length > 0
         ? { lat: coordinates[0].lat, lng: coordinates[0].lng }
         : { lat: 0, lng: 0 };
@@ -15,8 +18,8 @@ function GMap(props){
     const options = {
         zoomControl: true,
         mapTypeControl: true,
-        streetViewControl: true,
-        fullscreenControl: true
+        streetViewControl: false,
+        fullscreenControl: false
     };
 
     return (
@@ -47,7 +50,7 @@ function GMap(props){
             options={options}
         >
             {coordinates.map((coordinate, index) => (
-                <Marker key={index} position={coordinate} />
+                <Marker key={index} position={{ lat: coordinate.lat, lng: coordinate.lng }} />
             ))}
             <Polyline path={coordinates} />
         </GoogleMap>
