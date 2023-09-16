@@ -73,10 +73,10 @@ const GMapContainer = ({ coordinates }) => {
             : (
                 <>
                     <Online>
-                        <div>Loading...</div>
+                        <div  className={`map_err_msg`}>Loading...</div>
                     </Online>
                     <Offline>
-                        <div>Sorry, cannot generate map offline. Map data will be available on the data portal.</div>
+                        <div  className={`map_err_msg`}>Sorry, cannot generate map offline. Map data will be available on the data portal.</div>
                     </Offline>
                 </>
             )
