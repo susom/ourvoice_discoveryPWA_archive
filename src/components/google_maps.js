@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api';
+import { Offline, Online } from "react-detect-offline";
+
 
 function GMap(props){
     const coordinates = props.coordinates;
@@ -68,7 +70,16 @@ const GMapContainer = ({ coordinates }) => {
     return (
         isLoaded
             ? <GMap coordinates={coordinates} map={map} setMap={setMap} />
-            : <div>Loading...</div>
+            : (
+                <>
+                    <Online>
+                        <div>Loading...</div>
+                    </Online>
+                    <Offline>
+                        <div>Sorry, cannot generate map offline. Map data will be available on the data portal.</div>
+                    </Offline>
+                </>
+            )
     );
 };
 
