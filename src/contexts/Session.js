@@ -52,7 +52,27 @@ export const SessionContextProvider = ({children}) => {
                     setTranslations({ ...defaultTranslations, ...appTextData });
 
                     const version       = appDataSnapshot.get('version');
-                    setVersion(version);
+                    const version_dev   = appDataSnapshot.get('version_dev');
+
+                    const gae_service   = process.env.GAE_SERVICE;
+                    const gae_version   = process.env.GAE_VERSION;
+
+                    console.log("service", gae_service);
+                    console.log("version", gae_version);
+
+                    if (gae_service === 'default') {
+                        // Load production version number
+                        console.log("prod service", gae_service);
+                        console.log("prod version", gae_version);
+
+                        setVersion(version);
+                    } else {
+                        // Load development version number
+                        console.log("dev service", gae_service);
+                        console.log("dev version", gae_version);
+
+                        setVersion(version_dev);
+                    }
 
                     // console.log("useEffect translations SHOULD ONLY SHOW ONCE", appTextData);
                     // console.log("useEffect version", version);
