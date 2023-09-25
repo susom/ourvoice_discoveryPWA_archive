@@ -54,17 +54,11 @@ export const SessionContextProvider = ({children}) => {
                     const version       = appDataSnapshot.get('version');
                     const version_dev   = appDataSnapshot.get('version_dev');
 
-                    const gae_service   = process.env.GAE_SERVICE;
-                    const gae_version   = process.env.GAE_VERSION;
-
-                    console.log("service", gae_service);
-                    console.log("version", gae_version);
+                    const gae_service   = process.env.GAE_SERVICE || 'development';;
+                    const gae_version   = process.env.GAE_VERSION || 'local-version';
 
                     if (gae_service === 'default') {
                         // Load production version number
-                        console.log("prod service", gae_service);
-                        console.log("prod version", gae_version);
-
                         setVersion(version);
                     } else {
                         // Load development version number
@@ -73,9 +67,6 @@ export const SessionContextProvider = ({children}) => {
 
                         setVersion(version_dev);
                     }
-
-                    // console.log("useEffect translations SHOULD ONLY SHOW ONCE", appTextData);
-                    // console.log("useEffect version", version);
                 }
             } catch (error) {
                 console.error("Error getting documents: ", error);
